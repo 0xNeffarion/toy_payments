@@ -1,0 +1,24 @@
+[package]
+name = "toy_payments"
+version = "0.1.0"
+edition = "2021"
+authors = ["Vasco Serrano <main@neffware.com>"]
+publish = false
+
+[lib]
+path = "src/lib.rs"
+
+# Enable strict clippy lints
+[lints.clippy]
+pedantic = { level = "warn", priority = 9 }
+nursery = { level = "warn", priority = 9 }
+must_use_candidate = { level = "allow", priority = 10 }
+
+[profile.dev.build-override]
+opt-level = 3
+
+[dependencies]
+anyhow = { version = "^1.0.86" }
+serde = { version = "1.0.209", features = ["derive"], default-features = false }
+csv = { version = "1.3.0", default-features = false }
+rust_decimal = { version = "1.36.0", features = ["serde", "serde-str"], default-features = false }

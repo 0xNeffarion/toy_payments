@@ -1,28 +1,7 @@
-# toy_payments
-
-Simple payments engine processor
-
-# Usage
-
-You will need cargo to build and run, and a transaction csv file as input.   
-You can find a few csv files under `/tests/resources/inputs/` as an example.
-
-Run with: 
-
-`cargo run -- <csv transactions file>`
-
-If you want to run tests, just run the following:
-
-`cargo test`
-
-## Code usage
-
-If you want to use this in a code base instead of a cli, you can use it in the following way:
-
-```rust
+use anyhow::{Context, Result};
 use toy_payments::{Accounts, Engine, Transactions};
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<()> {
     // Create a new accounts instance
     let accounts = Accounts::new();
 
@@ -30,7 +9,8 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut engine = Engine::new(accounts);
 
     // Read the transactions from the csv file in the arguments
-    let transactions = Transactions::from_args()?;
+    let transactions = Transactions::from_args()
+        .with_context(|| "Failed to retrieve transactions file in arguments")?;
 
     // Feed the transactions to the engine and process them
     //
@@ -39,6 +19,10 @@ fn main() -> Result<(), Box<dyn Error>> {
     engine.process(transactions);
 
     // Write the state of the accounts to stdout as csv
-    engine.accounts().print_state()?;
+    engine
+        .accounts()
+        .print_state()
+        .with_context(|| "Failed to print accounts state to stdout")?;
+
+    Ok(())
 }
-```
